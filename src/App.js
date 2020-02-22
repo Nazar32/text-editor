@@ -1,13 +1,17 @@
 import React, { Component } from 'react';
+import { observer, Provider, inject } from 'mobx-react';
 import './App.css';
 import ControlPanel from './control-panel/ControlPanel';
 import FileZone from './file-zone/FileZone';
 import getMockText from './text.service';
+import { store } from './store';
+import { SynonymPopup } from './synonym-popup/SynonymPopup';
 
 class App extends Component {
   state = {
     textWords: {},
-    selectionIndex: null
+    selectionIndex: null,
+    position: { top: null, left: null }
   };
 
   componentDidMount() {
@@ -19,8 +23,20 @@ class App extends Component {
   }
 
   onSelectionChange = () => {
+    const selection = window.getSelection();
+    if (selection.toString() === '') {
+      this.setState({
+        selectionIndex: null
+      });
+      return;
+    }
+    const boundingClientRect = selection.getRangeAt(0).getBoundingClientRect();
     this.setState({
-      selectionIndex: window.getSelection().baseNode.parentElement.id
+      position: {
+        top: boundingClientRect.top,
+        left: boundingClientRect.left
+      },
+      selectionIndex: selection.baseNode.parentElement.id
     });
   };
 
@@ -68,11 +84,39 @@ class App extends Component {
       return {};
     }
     const selectedWord = textWords[selectionIndex];
+    if (!selectedWord) {
+      return {};
+    }
     return selectedWord.formatting;
   };
 
+  replaceWord = newWord => {
+    const { textWords, selectionIndex } = this.state;
+    const textWordsCopy = { ...textWords };
+    const selectedWord = { ...textWordsCopy[selectionIndex] };
+    selectedWord.word = newWord;
+    this.setState({
+      textWords: Object.entries(textWords).reduce((acc, [key, textWord]) => {
+        if (selectionIndex === key) {
+          acc[key] = {
+            ...textWord,
+            word: newWord
+          };
+        } else {
+          acc[key] = textWord;
+        }
+        return acc;
+      }, {}),
+      selectionIndex: null
+    });
+  };
+
   render() {
-    const { textWords } = this.state;
+    const { textWords, selectionIndex, position } = this.state;
+    const selectedWord = textWords[selectionIndex];
+    const {
+      store: { synonyms, fetchSynonyms, clearSynonyms }
+    } = this.props;
     return (
       <div className="App">
         <header>
@@ -87,10 +131,25 @@ class App extends Component {
             textWords={textWords}
             onSelectionChange={this.onSelectionChange}
           />
+          <SynonymPopup
+            key={selectionIndex}
+            synonyms={synonyms}
+            selectedWord={selectedWord && selectedWord.word}
+            fetchSynonyms={fetchSynonyms}
+            clearSynonyms={clearSynonyms}
+            position={position}
+            replaceWord={this.replaceWord}
+          />
         </main>
       </div>
     );
   }
 }
 
-export default App;
+const ObserverApp = inject('store')(observer(App));
+
+export default () => (
+  <Provider store={store}>
+    <ObserverApp />
+  </Provider>
+);

@@ -1,0 +1,23 @@
+.synonym-popup {
+    position: absolute;
+    top: 150px;
+    left: 500px;
+    background: white;
+    height: 300px;
+    overflow: scroll;
+    padding: 0 4px;
+}
+
+.synonym-item {
+    margin-bottom: 4px;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+.synonym-item:hover {
+    border: 1px solid darkgray;
+}
+
+.synonym-item:last-of-type {
+    margin-bottom: 0;
+}
