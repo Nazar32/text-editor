@@ -12,4 +12,17 @@
     flex-grow: 1;
     background-color: #fff;
     border: 1px solid #e4dede;
+    padding: 8px 16px;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.italic {
+    font-style: italic;
+}
+
+.underlined {
+    text-decoration: underline;
 }
