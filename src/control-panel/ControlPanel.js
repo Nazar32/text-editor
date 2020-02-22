@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import cn from 'classnames';
 import './ControlPanel.css';
 
 class ControlPanel extends Component {
@@ -15,25 +16,29 @@ class ControlPanel extends Component {
   };
 
   render() {
+    const { activeFormatting } = this.props;
     return (
       <div id="control-panel">
         <div id="format-actions">
           <button
-            className="format-action"
+            className={cn('format-action', activeFormatting.bold && 'active')}
             type="button"
             onClick={this.applyBold}
           >
             <b>B</b>
           </button>
           <button
-            className="format-action"
+            className={cn('format-action', activeFormatting.italic && 'active')}
             type="button"
             onClick={this.applyItalic}
           >
             <i>I</i>
           </button>
           <button
-            className="format-action"
+            className={cn(
+              'format-action',
+              activeFormatting.underlined && 'active'
+            )}
             type="button"
             onClick={this.applyUnderlined}
           >

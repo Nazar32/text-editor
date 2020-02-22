@@ -62,6 +62,15 @@ class App extends Component {
     return textWords;
   };
 
+  getActiveFormatting = () => {
+    const { selectionIndex, textWords } = this.state;
+    if (selectionIndex === null) {
+      return {};
+    }
+    const selectedWord = textWords[selectionIndex];
+    return selectedWord.formatting;
+  };
+
   render() {
     const { textWords } = this.state;
     return (
@@ -70,7 +79,10 @@ class App extends Component {
           <span>Simple Text Editor</span>
         </header>
         <main>
-          <ControlPanel applyFormatting={this.applyFormatting} />
+          <ControlPanel
+            activeFormatting={this.getActiveFormatting()}
+            applyFormatting={this.applyFormatting}
+          />
           <FileZone
             textWords={textWords}
             onSelectionChange={this.onSelectionChange}

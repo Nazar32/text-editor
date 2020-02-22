@@ -6,7 +6,22 @@
     flex-direction: column;
     padding-top: 5px;
 }
+
 #format-actions {
     width: 200px;
     margin-right: 400px;
+}
+
+.format-action {
+    margin-right: 8px;
+}
+
+.format-action:last-of-type {
+    margin-right: 0;
+}
+
+.format-action.active {
+    border-radius: 5px;
+    background: #e9e9e9;
+    outline: 0;
 }
